@@ -1,0 +1,24 @@
+tools/render_hypermotion_video.sh
+  s_170bb39ae5a4e4::t_3c64c38d6da427 126,137-142,145-151,153-154
+  s_170bb39ae5a4e4::t_4a2c8b0b803588 62-125
+  s_170bb39ae5a4e4::t_57320f4101c5a6 1-8,10-61,127-136,143-144,152,155-160
+  s_170bb39ae5a4e4::t_72e11fec7a6301 9,161
+docs/06-video-hypermotion.md
+  s_170bb39ae5a4e4::t_57320f4101c5a6 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "46bf58d434e49a36f17292805aabde33f47f47e8",
+  "prompts": {},
+  "sessions": {
+    "s_170bb39ae5a4e4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e3fef-ba78-7c31-9e87-9b555b99df6f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "bue221 <camiloplaza3@gmail.com>"
+    }
+  }
+}
