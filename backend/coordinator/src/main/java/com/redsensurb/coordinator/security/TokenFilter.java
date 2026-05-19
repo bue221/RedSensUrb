@@ -16,11 +16,21 @@ public class TokenFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
         if ("POST".equals(req.getMethod()) && req.getRequestURI().contains("/api/v1/alerts/critical")) {
             String auth = req.getHeader("Authorization");
             if (auth == null || !auth.equals("Bearer " + token)) {
-                ((HttpServletResponse) response).setStatus(401);
-                response.getWriter().write("unauthorized");
+                // Ensure CORS headers are present so browsers surface the 401
+                // instead of a misleading "CORS error". Mirrors the request Origin.
+                String origin = req.getHeader("Origin");
+                if (origin != null && !origin.isBlank()) {
+                    res.setHeader("Access-Control-Allow-Origin", origin);
+                    res.setHeader("Vary", "Origin");
+                    res.setHeader("Access-Control-Allow-Credentials", "true");
+                }
+                res.setStatus(401);
+                res.setContentType("application/json");
+                res.getWriter().write("{\"error\":\"unauthorized\"}");
                 return;
             }
         }
