@@ -36,14 +36,14 @@ export default function AlertComposer({ zones }) {
     <div className="panel">
       <h3>Disparar alerta crítica (2PC)</h3>
       <form className="composer" onSubmit={submit}>
-        <div className="col-2">
+        <div className="col-3">
           <label>Zona</label>
           <input value={zoneId} onChange={e => setZoneId(e.target.value)} list="zones-dl" />
           <datalist id="zones-dl">
             {(zones || []).map(z => <option key={z} value={z} />)}
           </datalist>
         </div>
-        <div className="col-2">
+        <div className="col-3">
           <label>Métrica</label>
           <select value={metric} onChange={e => setMetric(e.target.value)}>
             <option value="temperatureC">temperatureC</option>
@@ -51,11 +51,11 @@ export default function AlertComposer({ zones }) {
             <option value="co2Ppm">co2Ppm</option>
           </select>
         </div>
-        <div>
+        <div className="col-2">
           <label>Valor</label>
           <input type="number" step="0.1" value={value} onChange={e => setValue(e.target.value)} />
         </div>
-        <div>
+        <div className="col-2">
           <label>Umbral</label>
           <input type="number" step="0.1" value={threshold} onChange={e => setThr(e.target.value)} />
         </div>
@@ -65,15 +65,15 @@ export default function AlertComposer({ zones }) {
             <option>CRITICAL</option><option>WARNING</option><option>INFO</option>
           </select>
         </div>
-        <div className="col-2">
+        <div className="col-3">
           <label>Origen</label>
           <input value={source} onChange={e => setSource(e.target.value)} />
         </div>
-        <div className="col-2">
+        <div className="col-3">
           <label>Token Bearer</label>
           <input type="password" value={token} onChange={e => setToken(e.target.value)} placeholder="changeme-token" />
         </div>
-        <div className="col-6" style={{display:'flex', justifyContent:'flex-end'}}>
+        <div className="col-6" style={{display:'flex', justifyContent:'flex-end', marginTop:4}}>
           <button type="submit" disabled={busy}>{busy ? 'Enviando…' : '🚨 Disparar alerta'}</button>
         </div>
       </form>

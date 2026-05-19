@@ -71,8 +71,9 @@ body {
 .kpi .value.warn  { color: var(--warn); }
 .kpi .value.bad   { color: var(--danger); }
 
-.grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(360px, 1fr); gap: 16px; align-items: start; }
+.grid-2 > * { min-width: 0; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 
 .panel {
   background: linear-gradient(180deg, var(--panel), var(--bg-2));
@@ -147,12 +148,20 @@ body {
 .alert-row .meta { color: var(--muted); font-size: 11px; }
 
 /* Forms */
-.composer { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.composer { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px 10px; }
+.composer > * { min-width: 0; }
 .composer .col-2 { grid-column: span 2; }
+.composer .col-3 { grid-column: span 3; }
 .composer .col-6 { grid-column: span 6; }
 .composer input, .composer select {
+  width: 100%;
+  max-width: 100%;
+  display: block;
   background: rgba(255,255,255,0.04); border: 1px solid var(--border);
   color: var(--text); border-radius: 8px; padding: 8px 10px; font-size: 13px; outline: none;
+}
+@media (max-width: 720px) {
+  .composer .col-2, .composer .col-3 { grid-column: span 6; }
 }
 .composer input:focus, .composer select:focus { border-color: var(--accent); }
 .composer button {
@@ -186,3 +195,17 @@ body {
   .grid-2 { grid-template-columns: 1fr; }
   .kpis { grid-template-columns: repeat(2,1fr); }
 }
+
+/* Chart */
+.chart-host { position: relative; }
+.chart-host svg { display: block; width: 100%; height: auto; }
+.chart-tabs { flex-wrap: wrap; }
+.chart-header { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom: 6px; }
+.chart-cursor {
+  font-size:12px; color:var(--muted);
+  display:flex; gap:14px; flex-wrap:wrap;
+  padding:8px 10px; border:1px solid var(--border); border-radius:10px;
+  background: rgba(255,255,255,0.02); margin-top:8px;
+}
+.chart-cursor b { color: var(--text); }
+

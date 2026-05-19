@@ -107,15 +107,16 @@ export default function App() {
         </div>
       </section>
 
+      <TimeSeriesChart samples={telemetry} />
+
       <section className="grid-2">
         <div>
-          <TimeSeriesChart samples={telemetry} />
           <NodesGrid nodes={nodes} samples={telemetry} />
+          <MarkdownReport nodes={nodes} samples={telemetry} alerts={alerts} />
         </div>
         <div>
           <AlertsPanel alerts={alerts} />
           <AlertComposer zones={zoneList} />
-          <MarkdownReport nodes={nodes} samples={telemetry} alerts={alerts} />
         </div>
       </section>
 
