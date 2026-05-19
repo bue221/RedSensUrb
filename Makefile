@@ -83,13 +83,14 @@ recover:
 clean:
 	$(COMPOSE) down -v
 
-## demo: Flujo demo completo end-to-end
-demo: up
+## demo: Flujo demo completo end-to-end (incluye UI en http://localhost:5173)
+demo: up-all
 	@sleep 5
 	@echo "==> status"; $(MAKE) -s status; echo ""
 	@echo "==> telemetry"; $(MAKE) -s telemetry; echo ""
 	@echo "==> alert (commit esperado)"; $(MAKE) -s alert; echo ""
 	@echo "==> alerts persistidas"; $(MAKE) -s alerts; echo ""
+	@echo "==> UI disponible en http://localhost:5173"
 
 .PHONY: help build up up-all down restart ps logs logs-coord logs-replicas \
 	status telemetry alert alerts fault-replica-a fault-replica-b recover clean demo
