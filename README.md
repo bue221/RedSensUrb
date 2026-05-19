@@ -1,5 +1,7 @@
 # Red-SensUrb
 
+<img width="1888" height="1018" alt="image" src="https://github.com/user-attachments/assets/9e8b1299-d028-4f03-b954-a8e3c64115be" />
+
 MVP distribuido (Java + React) para sensores urbanos.
 
 ## Qué ya funciona (MVP-1)
