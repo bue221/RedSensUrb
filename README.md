@@ -68,6 +68,18 @@ Red-SensUrb simula una red urbana de sensores ambientales distribuidos. El flujo
 
 Esto cubre los requisitos del taller: comunicación síncrona/asíncrona (TCP/UDP), invocación remota (RMI), Web Services (REST), transacciones distribuidas, tolerancia a fallos básica y seguridad por token.
 
+## Video explicativo
+
+Video estilo hypermotion para presentar el proyecto:
+
+[Ver video MP4](./media/redsensurb-hypermotion.mp4)
+
+El render es reproducible con:
+
+```bash
+./tools/render_hypermotion_video.sh
+```
+
 ## Documentación de estudio
 
 La carpeta [`docs/`](./docs) contiene la explicación teórica para estudiar y defender el proyecto:
@@ -78,6 +90,7 @@ La carpeta [`docs/`](./docs) contiene la explicación teórica para estudiar y d
 - [`docs/03-pruebas-mvp.md`](./docs/03-pruebas-mvp.md) — cómo levantar y probar paso a paso.
 - [`docs/04-api.md`](./docs/04-api.md) — referencia de endpoints REST.
 - [`docs/05-defensa.md`](./docs/05-defensa.md) — guía para la presentación/defensa.
+- [`docs/06-video-hypermotion.md`](./docs/06-video-hypermotion.md) — guion y notas del video explicativo.
 
 ## Estructura del repo
 - `backend/` (Maven multi-módulo: `shared-contracts`, `coordinator`, `replica`, `sensor-node`)

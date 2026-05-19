@@ -134,20 +134,20 @@ else
 fi
 
 ffmpeg -y \
-  -loop 1 -t 7 -i "$WORK_DIR/slide-01.png" \
-  -loop 1 -t 9 -i "$WORK_DIR/slide-02.png" \
-  -loop 1 -t 9 -i "$WORK_DIR/slide-03.png" \
-  -loop 1 -t 12 -i "$WORK_DIR/slide-04.png" \
-  -loop 1 -t 7 -i "$WORK_DIR/slide-05.png" \
-  -loop 1 -t 8 -i "$WORK_DIR/slide-06.png" \
+  -loop 1 -t 8 -i "$WORK_DIR/slide-01.png" \
+  -loop 1 -t 10 -i "$WORK_DIR/slide-02.png" \
+  -loop 1 -t 10 -i "$WORK_DIR/slide-03.png" \
+  -loop 1 -t 14 -i "$WORK_DIR/slide-04.png" \
+  -loop 1 -t 9 -i "$WORK_DIR/slide-05.png" \
+  -loop 1 -t 10 -i "$WORK_DIR/slide-06.png" \
   "${AUDIO_INPUT[@]}" \
   -filter_complex "
-    [0:v]zoompan=z='min(zoom+0.0008,1.05)':d=210:s=1920x1080:fps=30,fade=t=in:st=0:d=0.35,fade=t=out:st=6.65:d=0.35,setpts=PTS-STARTPTS[v0];
-    [1:v]zoompan=z='min(zoom+0.0006,1.05)':d=270:s=1920x1080:fps=30,fade=t=in:st=0:d=0.35,fade=t=out:st=8.65:d=0.35,setpts=PTS-STARTPTS[v1];
-    [2:v]zoompan=z='min(zoom+0.0006,1.05)':d=270:s=1920x1080:fps=30,fade=t=in:st=0:d=0.35,fade=t=out:st=8.65:d=0.35,setpts=PTS-STARTPTS[v2];
-    [3:v]zoompan=z='min(zoom+0.0005,1.06)':d=360:s=1920x1080:fps=30,fade=t=in:st=0:d=0.35,fade=t=out:st=11.65:d=0.35,setpts=PTS-STARTPTS[v3];
-    [4:v]zoompan=z='min(zoom+0.0008,1.05)':d=210:s=1920x1080:fps=30,fade=t=in:st=0:d=0.35,fade=t=out:st=6.65:d=0.35,setpts=PTS-STARTPTS[v4];
-    [5:v]zoompan=z='min(zoom+0.0007,1.05)':d=240:s=1920x1080:fps=30,fade=t=in:st=0:d=0.35,fade=t=out:st=7.65:d=0.35,setpts=PTS-STARTPTS[v5];
+    [0:v]fps=30,scale=1920:1080,fade=t=in:st=0:d=0.35,fade=t=out:st=7.65:d=0.35,setpts=PTS-STARTPTS[v0];
+    [1:v]fps=30,scale=1920:1080,fade=t=in:st=0:d=0.35,fade=t=out:st=9.65:d=0.35,setpts=PTS-STARTPTS[v1];
+    [2:v]fps=30,scale=1920:1080,fade=t=in:st=0:d=0.35,fade=t=out:st=9.65:d=0.35,setpts=PTS-STARTPTS[v2];
+    [3:v]fps=30,scale=1920:1080,fade=t=in:st=0:d=0.35,fade=t=out:st=13.65:d=0.35,setpts=PTS-STARTPTS[v3];
+    [4:v]fps=30,scale=1920:1080,fade=t=in:st=0:d=0.35,fade=t=out:st=8.65:d=0.35,setpts=PTS-STARTPTS[v4];
+    [5:v]fps=30,scale=1920:1080,fade=t=in:st=0:d=0.35,fade=t=out:st=9.65:d=0.35,setpts=PTS-STARTPTS[v5];
     [v0][v1][v2][v3][v4][v5]concat=n=6:v=1:a=0,format=yuv420p[v]" \
   -map "[v]" \
   -map 6:a \
