@@ -123,7 +123,22 @@ curl -X POST http://localhost:8080/api/v1/alerts/critical \
 curl "http://localhost:8080/api/v1/alerts?limit=10"
 ```
 
-UI: `http://localhost:5173`
+## Dashboard web
+
+UI gráfica disponible en `http://localhost:5173` (refresh cada 2s).
+
+- **KPIs en vivo**: nodos totales, en línea, lentos/caídos, muestras/min, última alerta.
+- **Gráfico temporal multi-zona** con tabs Temp / Humedad / CO₂, ejes, grid y tooltip con crosshair.
+- **Grid de nodos** con LED de estado (🟢 <10s · 🟡 <30s · 🔴 >30s), sparkline de temperatura y umbrales coloreados.
+- **Timeline de alertas** con severidad codificada (CRITICAL / WARNING / INFO).
+- **Composer 2PC**: dispara `POST /api/v1/alerts/critical` con Bearer token (persistido en `localStorage`).
+- **Reporte Markdown en vivo** con tabla por zona y nodos con atención.
+
+Variables relevantes:
+
+- `VITE_API_BASE` (frontend, default `http://localhost:8080`).
+- `CORS_ALLOWED_ORIGINS` (coordinator, default `*` para dev; usar lista CSV en prod).
+- `API_TOKEN` (coordinator, default `changeme-token`).
 
 ## Flujo de telemetría
 
