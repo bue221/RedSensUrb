@@ -1,0 +1,21 @@
+tools/render_hypermotion_video.sh
+  s_170bb39ae5a4e4::t_3719fd74430d69 137-142,145-150
+README.md
+  s_170bb39ae5a4e4::t_56655439e3c419 71-82,93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "c98f81d4eb033268445138b8ef7e374c862bbc87",
+  "prompts": {},
+  "sessions": {
+    "s_170bb39ae5a4e4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e3fef-ba78-7c31-9e87-9b555b99df6f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "bue221 <camiloplaza3@gmail.com>"
+    }
+  }
+}
