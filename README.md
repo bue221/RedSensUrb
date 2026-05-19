@@ -51,13 +51,50 @@ flowchart LR
   TX -- RMI prepare/commit/rollback --> RB
 ```
 
-## Estructura
-- `backend/` (Maven multi-módulo)
-- `frontend/web-client` (React + Vite)
+## Cómo funciona (resumen)
+
+Red-SensUrb simula una red urbana de sensores ambientales distribuidos. El flujo es:
+
+1. **Sensores** (procesos Java independientes) generan lecturas de temperatura, humedad y CO2 cada N milisegundos.
+2. Cada lectura se envía como **JSON vía UDP** al `coordinator` (comunicación asíncrona, sin esperar ACK).
+3. El **coordinator** (Spring Boot) recibe los datagramas en un listener dedicado, valida, persiste en **SQLite** y actualiza el `lastSeen` del nodo.
+4. El cliente (React o `curl`) consulta los datos históricos y el estado de nodos por **REST**.
+5. Cuando se dispara una **alerta crítica**, el coordinator ejecuta un **2PC (two-phase commit) simplificado** sobre dos réplicas vía **Java RMI**:
+   - `prepare` paralelo en `replica-a` y `replica-b`.
+   - Si ambas votan OK: `commit` en ambas.
+   - Si alguna falla o hace timeout: `rollback` en ambas.
+   - La decisión queda auditada en SQLite.
+6. Endpoints sensibles requieren **token Bearer** (autenticación básica).
+
+Esto cubre los requisitos del taller: comunicación síncrona/asíncrona (TCP/UDP), invocación remota (RMI), Web Services (REST), transacciones distribuidas, tolerancia a fallos básica y seguridad por token.
+
+## Documentación de estudio
+
+La carpeta [`docs/`](./docs) contiene la explicación teórica para estudiar y defender el proyecto:
+
+- [`docs/00-indice.md`](./docs/00-indice.md) — índice de la documentación.
+- [`docs/01-arquitectura.md`](./docs/01-arquitectura.md) — componentes, capas y diagramas.
+- [`docs/02-flujos.md`](./docs/02-flujos.md) — secuencias de telemetría, estado de nodos y 2PC.
+- [`docs/03-pruebas-mvp.md`](./docs/03-pruebas-mvp.md) — cómo levantar y probar paso a paso.
+- [`docs/04-api.md`](./docs/04-api.md) — referencia de endpoints REST.
+- [`docs/05-defensa.md`](./docs/05-defensa.md) — guía para la presentación/defensa.
+
+## Estructura del repo
+- `backend/` (Maven multi-módulo: `shared-contracts`, `coordinator`, `replica`, `sensor-node`)
+- `frontend/web-client/` (React + Vite)
 - `deploy/docker-compose.yml`
-- `openspec/` (SDD)
+- `openspec/` (artefactos SDD: proposal, spec, design, tasks)
+- `docs/` (documentación de estudio)
+- `Makefile` (atajos para Docker y demo)
 
 ## Levantar MVP
+```bash
+make up        # backend distribuido
+make demo      # flujo end-to-end automatizado
+make help      # ver todos los comandos
+```
+
+O sin Makefile:
 ```bash
 docker compose -f deploy/docker-compose.yml up --build
 ```
@@ -130,5 +167,5 @@ sequenceDiagram
   API-->>U: 200 { txId, decision, votes }
 ```
 
-## Estudio
-Ver carpeta `docs/` (índice: `docs/00-indice.md`).
+## Más lectura
+Ver carpeta [`docs/`](./docs) para profundizar en cada flujo y la guía de defensa.
