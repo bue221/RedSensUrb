@@ -1,5 +1,56 @@
 # Flujos clave
 
+## Ingesta de telemetría
+
+```mermaid
+sequenceDiagram
+  participant S as Sensor
+  participant U as UdpIngestService
+  participant R as TelemetryRepository
+  participant DB as SQLite
+
+  S->>U: DatagramPacket JSON
+  U->>U: parse + validate
+  U->>R: save(sample)
+  R->>DB: INSERT telemetry_samples
+```
+
+## Estado de nodos
+
+```mermaid
+flowchart LR
+  U[UDP Ingest] -- actualiza --> M[InMemoryStore.nodeLastSeen]
+  C[GET /nodes/status] --> M
+```
+
+## Alerta crítica con 2PC
+
+```mermaid
+sequenceDiagram
+  participant Cli as Cliente
+  participant API as Coordinator
+  participant TX as TxCoordinatorService
+  participant RA as replica-a
+  participant RB as replica-b
+  participant DB as SQLite
+
+  Cli->>API: POST /alerts/critical
+  API->>TX: run2pc(req)
+  TX->>RA: prepare
+  TX->>RB: prepare
+  alt todos OK
+    TX->>RA: commit
+    TX->>RB: commit
+  else alguno falla
+    TX->>RA: rollback
+    TX->>RB: rollback
+  end
+  TX->>DB: INSERT alert_transactions
+  TX-->>API: TxOutcome
+  API-->>Cli: JSON
+```
+
+
 ## 1) Ingesta de telemetría
 1. Sensor genera JSON con temp/humedad/co2.
 2. Lo manda por UDP al puerto del coordinator.

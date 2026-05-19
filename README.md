@@ -14,6 +14,43 @@ MVP distribuido (Java + React) para sensores urbanos.
 - Token básico para endpoint crítico.
 - Persistencia SQLite para histórico y auditoría de alertas críticas.
 
+## Arquitectura
+
+```mermaid
+flowchart LR
+  subgraph Sensores[Sensores Java]
+    S1[sensor-1<br/>zone-north]
+    S2[sensor-2<br/>zone-south]
+    S3[sensor-3<br/>zone-east]
+  end
+
+  subgraph Coordinator[Coordinator Java / Spring Boot]
+    UDP[UDP Ingest :9000]
+    REST[REST API :8080]
+    TX[Tx Coordinator 2PC]
+    DB[(SQLite<br/>telemetry + alerts)]
+  end
+
+  subgraph Replicas[Replicas RMI]
+    RA[replica-a :1099]
+    RB[replica-b :1099]
+  end
+
+  WEB[Web Client React :5173]
+  USER[curl / autoridad / ciudadano]
+
+  S1 -- UDP JSON --> UDP
+  S2 -- UDP JSON --> UDP
+  S3 -- UDP JSON --> UDP
+  UDP --> DB
+  WEB -- HTTP --> REST
+  USER -- HTTP + Bearer token --> REST
+  REST --> DB
+  REST --> TX
+  TX -- RMI prepare/commit/rollback --> RA
+  TX -- RMI prepare/commit/rollback --> RB
+```
+
 ## Estructura
 - `backend/` (Maven multi-módulo)
 - `frontend/web-client` (React + Vite)
@@ -37,6 +74,61 @@ curl "http://localhost:8080/api/v1/alerts?limit=10"
 ```
 
 UI: `http://localhost:5173`
+
+## Flujo de telemetría
+
+```mermaid
+sequenceDiagram
+  participant S as Sensor
+  participant C as Coordinator (UDP)
+  participant DB as SQLite
+  participant API as REST API
+  participant U as Cliente
+
+  loop cada N ms
+    S->>C: UDP JSON (temp, hum, co2)
+    C->>DB: INSERT telemetry_samples
+  end
+  U->>API: GET /api/v1/telemetry
+  API->>DB: SELECT ... ORDER BY id DESC
+  DB-->>API: filas
+  API-->>U: 200 JSON
+```
+
+## Flujo de alerta crítica (2PC sobre RMI)
+
+```mermaid
+sequenceDiagram
+  participant U as Cliente
+  participant API as Coordinator REST
+  participant TX as Tx Coordinator
+  participant RA as replica-a (RMI)
+  participant RB as replica-b (RMI)
+  participant DB as SQLite
+
+  U->>API: POST /alerts/critical (Bearer token)
+  API->>TX: run2pc(alert)
+  par prepare
+    TX->>RA: prepare(txId, alert)
+    TX->>RB: prepare(txId, alert)
+  end
+  RA-->>TX: vote OK
+  RB-->>TX: vote OK
+  alt todas OK
+    par commit
+      TX->>RA: commit(txId)
+      TX->>RB: commit(txId)
+    end
+  else alguna falla
+    par rollback
+      TX->>RA: rollback(txId)
+      TX->>RB: rollback(txId)
+    end
+  end
+  TX->>DB: INSERT alert_transactions (decision)
+  TX-->>API: TxOutcome
+  API-->>U: 200 { txId, decision, votes }
+```
 
 ## Estudio
 Ver carpeta `docs/` (índice: `docs/00-indice.md`).
