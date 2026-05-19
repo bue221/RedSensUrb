@@ -1,0 +1,25 @@
+# Local Pi runtime state
+.atl/
+.pi/
+
+# Java / Maven
+target/
+*.class
+*.jar
+!**/src/**/*.jar
+
+# Node / React
+node_modules/
+dist/
+.vite/
+
+# Env
+.env
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.iml

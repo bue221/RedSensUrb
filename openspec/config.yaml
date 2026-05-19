@@ -1,0 +1,20 @@
+project:
+  name: Red-SensUrb
+  description: Distributed urban environmental sensor coordination system (Java backend + React web client)
+
+sdd:
+  execution_mode: auto
+  artifact_store: openspec
+  chained_pr_strategy: single-pr-default
+  review_budget_lines: 500
+
+engineering:
+  default_artifact_language: en
+  strict_tdd:
+    enabled: false
+    test_command: ""
+
+stack:
+  backend: java
+  frontend: react
+  deployment: docker-compose

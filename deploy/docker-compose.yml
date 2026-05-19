@@ -1,0 +1,84 @@
+name: redsensurb
+
+services:
+  coordinator:
+    build:
+      context: ../backend
+      dockerfile: coordinator/Dockerfile
+    environment:
+      API_TOKEN: ${API_TOKEN:-changeme-token}
+      COORDINATOR_REST_PORT: ${COORDINATOR_REST_PORT:-8080}
+      COORDINATOR_UDP_PORT: ${COORDINATOR_UDP_PORT:-9000}
+      SQLITE_PATH: /data/redsensurb.db
+      RMI_REPLICA_A: rmi://replica-a:1099/replica-a
+      RMI_REPLICA_B: rmi://replica-b:1099/replica-b
+    ports:
+      - "8080:8080"
+      - "9000:9000/udp"
+    volumes:
+      - coordinator-data:/data
+    depends_on:
+      - replica-a
+      - replica-b
+
+  replica-a:
+    build:
+      context: ../backend
+      dockerfile: replica/Dockerfile
+    environment:
+      REPLICA_ID: replica-a
+      RMI_REGISTRY_PORT: 1099
+      RMI_BIND_NAME: replica-a
+
+  replica-b:
+    build:
+      context: ../backend
+      dockerfile: replica/Dockerfile
+    environment:
+      REPLICA_ID: replica-b
+      RMI_REGISTRY_PORT: 1099
+      RMI_BIND_NAME: replica-b
+
+  sensor-1:
+    build:
+      context: ../backend
+      dockerfile: sensor-node/Dockerfile
+    environment:
+      SENSOR_ID: sensor-1
+      ZONE_ID: zone-north
+      COORDINATOR_HOST: coordinator
+      COORDINATOR_UDP_PORT: 9000
+      SENSOR_TCP_PORT: 9101
+
+  sensor-2:
+    build:
+      context: ../backend
+      dockerfile: sensor-node/Dockerfile
+    environment:
+      SENSOR_ID: sensor-2
+      ZONE_ID: zone-south
+      COORDINATOR_HOST: coordinator
+      COORDINATOR_UDP_PORT: 9000
+      SENSOR_TCP_PORT: 9102
+
+  sensor-3:
+    build:
+      context: ../backend
+      dockerfile: sensor-node/Dockerfile
+    environment:
+      SENSOR_ID: sensor-3
+      ZONE_ID: zone-east
+      COORDINATOR_HOST: coordinator
+      COORDINATOR_UDP_PORT: 9000
+      SENSOR_TCP_PORT: 9103
+
+  web-client:
+    build:
+      context: ../frontend/web-client
+    environment:
+      VITE_API_BASE: http://localhost:8080
+    ports:
+      - "5173:5173"
+
+volumes:
+  coordinator-data:
