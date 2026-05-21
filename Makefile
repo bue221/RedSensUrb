@@ -20,6 +20,26 @@ build:
 up:
 	$(COMPOSE) up --build -d coordinator replica-a replica-b sensor-1 sensor-2 sensor-3
 
+## up-core: Levanta solo coordinator + replicas (para modo distribuido LAN)
+up-core:
+	$(COMPOSE) up --build -d coordinator replica-a replica-b
+
+## up-sensor: Levanta un solo sensor (SENSOR=sensor-1..3) apuntando a COORDINATOR_HOST
+## Ej: make up-sensor SENSOR=sensor-1 COORDINATOR_HOST=192.168.1.10
+SENSOR ?= sensor-1
+COORDINATOR_HOST ?= coordinator
+COORDINATOR_UDP_PORT ?= 9000
+up-sensor:
+	COORDINATOR_HOST=$(COORDINATOR_HOST) COORDINATOR_UDP_PORT=$(COORDINATOR_UDP_PORT) \
+	  $(COMPOSE) up --build -d $(SENSOR)
+
+## up-sensors: Levanta un subconjunto de sensores (SENSORS="sensor-2 sensor-3") apuntando a COORDINATOR_HOST
+## Ej: make up-sensors SENSORS="sensor-2 sensor-3" COORDINATOR_HOST=localhost
+SENSORS ?= sensor-1 sensor-2 sensor-3
+up-sensors:
+	COORDINATOR_HOST=$(COORDINATOR_HOST) COORDINATOR_UDP_PORT=$(COORDINATOR_UDP_PORT) \
+	  $(COMPOSE) up --build -d $(SENSORS)
+
 ## up-all: Levanta todo incluyendo web-client
 up-all:
 	$(COMPOSE) up --build -d
@@ -92,5 +112,5 @@ demo: up-all
 	@echo "==> alerts persistidas"; $(MAKE) -s alerts; echo ""
 	@echo "==> UI disponible en http://localhost:5173"
 
-.PHONY: help build up up-all down restart ps logs logs-coord logs-replicas \
+.PHONY: help build up up-core up-sensor up-sensors up-all down restart ps logs logs-coord logs-replicas \
 	status telemetry alert alerts fault-replica-a fault-replica-b recover clean demo
